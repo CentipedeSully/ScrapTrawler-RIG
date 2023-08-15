@@ -14,7 +14,7 @@ public class DetectInput : MonoBehaviour
     //Monobehaviors
     private void Awake()
     {
-        _movementRef = GetComponent<ShipMovement>();
+        InitializeReferences();
     }
 
     private void Update()
@@ -27,6 +27,12 @@ public class DetectInput : MonoBehaviour
 
 
     //Internal Utils
+    private void InitializeReferences()
+    {
+        if (_movementRef == null)
+            _movementRef = GetComponent<ShipMovement>();
+    }
+
     private void ListenForThrustInput()
     {
         _thrustInput = Input.GetAxis("Vertical");

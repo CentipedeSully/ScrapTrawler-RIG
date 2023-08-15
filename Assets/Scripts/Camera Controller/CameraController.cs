@@ -12,6 +12,8 @@ public class CameraController : MonoSingleton<CameraController>
     [SerializeField] private CinemachineVirtualCamera _mainVirtualCamera;
     [SerializeField] private Transform _playspaceOrigin;
     [SerializeField] private GameObject _currentFocusObject;
+    [SerializeField] private GameObject _starParticlesPrefab;
+    private GameObject _starParticlesInstance;
 
 
     [Header("Debug Utilities & Commands")]
@@ -47,6 +49,25 @@ public class CameraController : MonoSingleton<CameraController>
         if (IsCurrentFocusNull())
             SetCurrentFocus(_playspaceOrigin.gameObject);
         else SetCurrentFocus(_currentFocusObject);
+
+        
+    }
+
+    private void CreateNewStarParticlesOnFocus()
+    {
+        if (_starParticlesPrefab == null)
+        {
+            STKDebugLogger.LogError("No StarParticlePrefab is set for the CameraController");
+            return;
+        }
+
+        else
+        {
+            if (_starParticlesInstance != null)
+                Destroy(_starParticlesInstance);
+
+            _starParticlesInstance = Instantiate(_starParticlesPrefab, Vector3.zero, Quaternion.identity, _currentFocusObject.transform);
+        }
     }
 
 
@@ -68,6 +89,8 @@ public class CameraController : MonoSingleton<CameraController>
         {
             _currentFocusObject = newFocusObject;
             _mainVirtualCamera.Follow = newFocusObject.transform;
+
+            CreateNewStarParticlesOnFocus();
         }
 
     }

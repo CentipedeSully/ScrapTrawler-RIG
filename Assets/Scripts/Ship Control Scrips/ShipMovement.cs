@@ -23,6 +23,7 @@ public class ShipMovement : MonoBehaviour
 
     [Header("Debug Utils")]
     [SerializeField] private bool _isDebugActive = false;
+    [SerializeField] private float _currentVelocityMagnitude;
 
     //references
     private Rigidbody2D _shipRB;
@@ -38,6 +39,11 @@ public class ShipMovement : MonoBehaviour
     private void Update()
     {
         RotateShip();
+
+        if (_isDebugActive)
+        {
+            TrackVelocity();
+        }
     }
 
     private void FixedUpdate()
@@ -242,6 +248,9 @@ public class ShipMovement : MonoBehaviour
         else EnterDebug();
     }
 
-
+    private void TrackVelocity()
+    {
+        _currentVelocityMagnitude = _shipRB.velocity.magnitude;
+    }
 
 }
