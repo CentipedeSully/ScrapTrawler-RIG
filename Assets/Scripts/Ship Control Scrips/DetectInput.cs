@@ -9,7 +9,7 @@ public class DetectInput : MonoBehaviour
     [SerializeField] private float _strafeInput;
     [SerializeField] private float _turnInput;
     [SerializeField] private ShipMovement _movementRef;
-
+    [SerializeField] private LookAheadFocus _lookAheadRef;
 
     //Monobehaviors
     private void Awake()
@@ -21,6 +21,7 @@ public class DetectInput : MonoBehaviour
     {
         ListenForInputs();
         CommunicateInputsToMovementReference();
+        CommunicateInputsToLookAheadRef();
     }
 
 
@@ -79,6 +80,11 @@ public class DetectInput : MonoBehaviour
         }
     }
 
+    private void CommunicateInputsToLookAheadRef()
+    {
+        if (_lookAheadRef != null)
+            _lookAheadRef.SetInput(new Vector2(_strafeInput, _thrustInput));
+    }
 
 
 
