@@ -15,14 +15,22 @@ public class CameraController : MonoSingleton<CameraController>
     [SerializeField] private GameObject _starParticlesPrefab;
     private GameObject _starParticlesInstance;
 
+    [Header("Zoom Settings")]
+    [SerializeField] private float _minZoomDistance = 2;
+    [SerializeField] private float _maxZoomDistance = 20;
+    [SerializeField] private float _zoomSpeed = 2;
 
     [Header("Debug Utilities & Commands")]
     [SerializeField] private bool _isDebugActive = false;
+    [SerializeField] [Range(-1,1)] private float _zoomInput;
 
 
 
     //Monobehaviors
-
+    private void Update()
+    {
+        ZoomBasedOnInput();
+    }
 
 
 
@@ -71,6 +79,13 @@ public class CameraController : MonoSingleton<CameraController>
     }
 
 
+    private void ZoomBasedOnInput()
+    {
+        if (_zoomInput < 0 && _mainVirtualCamera.m_Lens.OrthographicSize < _maxZoomDistance)
+            _mainVirtualCamera.m_Lens.OrthographicSize += _zoomSpeed * Time.deltaTime;
+        else if (_zoomInput > 0 && _mainVirtualCamera.m_Lens.OrthographicSize > _minZoomDistance)
+            _mainVirtualCamera.m_Lens.OrthographicSize -= _zoomSpeed * Time.deltaTime;
+    }
 
     //Getters, Setters, & Commands
     public bool IsCurrentFocusNull()
@@ -95,6 +110,11 @@ public class CameraController : MonoSingleton<CameraController>
 
     }
 
+
+    public void SetZoomInput(float zoomCommand)
+    {
+        _zoomInput = Mathf.Clamp(zoomCommand, -1, 1);
+    }
 
 
     //Debug Utils

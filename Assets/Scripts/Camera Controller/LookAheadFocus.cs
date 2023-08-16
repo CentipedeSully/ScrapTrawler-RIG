@@ -6,8 +6,8 @@ public class LookAheadFocus : MonoBehaviour
 {
     //Declarations
     [Header("Look Ahead Settings")]
-    [SerializeField][Min(0)] private float _maxLookAheadDistance = 5;
-    [SerializeField] [Min(0)] private float _transitionDuration = 1.5f;
+    [SerializeField][Min(0)] private float _maxLookAheadDistance = 1.5f;
+    [SerializeField] [Min(0)] private float _lerpTimeStep = .01f;
     [SerializeField] private Rigidbody2D _shipRB;
 
     [Header("Debugging Utilities")]
@@ -21,7 +21,6 @@ public class LookAheadFocus : MonoBehaviour
     private void Update()
     {
         DriftFocusTowardsInputDirection();
-
     }
 
 
@@ -32,10 +31,9 @@ public class LookAheadFocus : MonoBehaviour
     {
         Vector2 targetPosition = _inputDirection * _maxLookAheadDistance;
         Vector2 currentPosition = new Vector2(transform.localPosition.x, transform.localPosition.y);
-        Vector2 shipVelocity = _shipRB.velocity;
 
         if ( currentPosition != targetPosition)
-            transform.localPosition =  Vector2.Lerp(currentPosition, targetPosition, _transitionDuration);
+            transform.localPosition =  Vector2.Lerp(currentPosition, targetPosition, _lerpTimeStep);
         
 
     }

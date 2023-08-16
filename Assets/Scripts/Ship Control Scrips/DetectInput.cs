@@ -5,11 +5,17 @@ using UnityEngine;
 public class DetectInput : MonoBehaviour
 {
     //Declarations
+    [Header("Inputs")]
     [SerializeField] private float _thrustInput;
     [SerializeField] private float _strafeInput;
     [SerializeField] private float _turnInput;
+
+    [SerializeField] private float _zoomInput;
+
+    [Header("References")]
     [SerializeField] private ShipMovement _movementRef;
     [SerializeField] private LookAheadFocus _lookAheadRef;
+    [SerializeField] private CameraController _cameraControllerRef;
 
     //Monobehaviors
     private void Awake()
@@ -22,6 +28,7 @@ public class DetectInput : MonoBehaviour
         ListenForInputs();
         CommunicateInputsToMovementReference();
         CommunicateInputsToLookAheadRef();
+        CommunicateInputsToCamerwaController();
     }
 
 
@@ -62,11 +69,19 @@ public class DetectInput : MonoBehaviour
         _turnInput = Input.GetAxis("Horizontal");
     }
 
+
+    private void ListenForZoomInput()
+    {
+        _zoomInput = Input.mouseScrollDelta.y;
+    }
+
+
     private void ListenForInputs()
     {
         ListenForStrafeInput();
         ListenForThrustInput();
         ListenForTurnInput();
+        ListenForZoomInput();
     }
 
 
@@ -86,6 +101,11 @@ public class DetectInput : MonoBehaviour
             _lookAheadRef.SetInput(new Vector2(_strafeInput, _thrustInput));
     }
 
+    private void CommunicateInputsToCamerwaController()
+    {
+        if (_cameraControllerRef != null)
+            _cameraControllerRef.SetZoomInput(_zoomInput);
+    }
 
 
     //Getters, Setters, Commands
