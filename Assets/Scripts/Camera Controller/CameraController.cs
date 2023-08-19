@@ -16,12 +16,15 @@ public class CameraController : MonoSingleton<CameraController>
     private GameObject _starParticlesInstance;
 
     [Header("Zoom Settings")]
+    
     [SerializeField] private float _minZoomDistance = 2;
     [SerializeField] private float _maxZoomDistance = 20;
     [SerializeField] private float _zoomSpeed = 2;
 
     [Header("Debug Utilities & Commands")]
     [SerializeField] private bool _isDebugActive = false;
+    [SerializeField] private float _currentZoomDistance;
+    [SerializeField] private int _currentZoomStep;
     [SerializeField] [Range(-1,1)] private float _zoomInput;
 
 
@@ -81,11 +84,24 @@ public class CameraController : MonoSingleton<CameraController>
 
     private void ZoomBasedOnInput()
     {
-        if (_zoomInput < 0 && _mainVirtualCamera.m_Lens.OrthographicSize < _maxZoomDistance)
-            _mainVirtualCamera.m_Lens.OrthographicSize += _zoomSpeed * Time.deltaTime;
-        else if (_zoomInput > 0 && _mainVirtualCamera.m_Lens.OrthographicSize > _minZoomDistance)
-            _mainVirtualCamera.m_Lens.OrthographicSize -= _zoomSpeed * Time.deltaTime;
+        _currentZoomDistance = _mainVirtualCamera.m_Lens.OrthographicSize;
+        float newZoomDistance = _currentZoomDistance;
+
+        //Need to implement: if pressed, lerp to next step.
+        if (_zoomInput < 0 && _currentZoomDistance < _maxZoomDistance)
+            newZoomDistance += _zoomSpeed * Time.deltaTime;
+
+        else if (_zoomInput > 0 && _currentZoomDistance > _minZoomDistance)
+            newZoomDistance -= _zoomSpeed * Time.deltaTime;
+            
+
+        if (newZoomDistance != _currentZoomDistance)
+        {
+            _mainVirtualCamera.m_Lens.OrthographicSize = newZoomDistance;
+            _currentZoomDistance = _mainVirtualCamera.m_Lens.OrthographicSize;
+        }
     }
+
 
     //Getters, Setters, & Commands
     public bool IsCurrentFocusNull()
