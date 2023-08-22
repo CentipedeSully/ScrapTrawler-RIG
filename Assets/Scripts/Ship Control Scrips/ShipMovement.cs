@@ -21,6 +21,10 @@ public class ShipMovement : MonoBehaviour
     [Header("Overrides")]
     [SerializeField] private bool _isMovementDisabled = false;
 
+    [Header("References")]
+    [SerializeField] private EngineEffectsController _engineEffectsController;
+    [SerializeField] private StrafeAnimController _strafeController;
+
     [Header("Debug Utils")]
     [SerializeField] private bool _isDebugActive = false;
     [SerializeField] private float _currentVelocityMagnitude;
@@ -38,12 +42,13 @@ public class ShipMovement : MonoBehaviour
 
     private void Update()
     {
-        RotateShip();
+        //RotateShipViaTransform();
+        RotateShipViaPhysics();
+        ControlEngineEffects();
+        ControlStrafeEffects();
 
         if (_isDebugActive)
-        {
             TrackVelocity();
-        }
     }
 
     private void FixedUpdate()
@@ -100,7 +105,7 @@ public class ShipMovement : MonoBehaviour
         }
     }
 
-    private void RotateShip()
+    private void RotateShipViaTransform()
     {
         if (!IsMovementDisabled())
         {
@@ -111,6 +116,38 @@ public class ShipMovement : MonoBehaviour
             Quaternion currentQuaternion = Quaternion.Euler(currentRotation);
 
             transform.rotation = currentQuaternion;
+        }
+    }
+
+    private void RotateShipViaPhysics()
+    {
+        if (!_isMovementDisabled)
+            _shipRB.AddTorque(-_turnCommand * _turnSpeed * Time.deltaTime);
+    }
+
+    private void ControlEngineEffects()
+    {
+        if (_engineEffectsController != null && _isMovementDisabled == false)
+        {
+            if (_yCommand > 0)
+                _engineEffectsController.FireEngines();
+            else _engineEffectsController.CutEngines();
+        }
+
+    }
+
+    private void ControlStrafeEffects()
+    {
+        if (_strafeController != null && _isMovementDisabled == false)
+        {
+            if (_xCommand > 0)
+                _strafeController.PlayStrafeRightAnim();
+
+            else if (_xCommand < 0)
+                _strafeController.PlayStrafeLeftAnim();
+
+            else 
+                _strafeController.NeutralizeStrafe();
         }
     }
 
